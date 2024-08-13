@@ -9,7 +9,7 @@ const getTodoSync = (id) => {
   const formattedData = "[" + data.split("}\n{").join("},{") + "]";
   const todos = JSON.parse(formattedData);
   const todo = todos.find((item )=> item.id == id);
-  return JSON.stringify(todo, null, 2);
+  return JSON.stringify(todo);
 };
 
 const createTodoSync = (todo) => {
