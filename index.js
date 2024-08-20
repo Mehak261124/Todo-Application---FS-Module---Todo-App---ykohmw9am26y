@@ -35,7 +35,7 @@ const updateTodoSync = (id, updates) => {
       try {
         return JSON.parse(t);
       } catch (error) {
-        console.error("Failed to parse line:", t);
+        console.error("Error parsing JSON:", t);
         throw error;
       }
     });
@@ -62,7 +62,7 @@ const deleteTodoSync = (id) => {
       try {
         return JSON.parse(t);
       } catch (error) {
-        console.error("Failed to parse line:", t);
+        console.error("Error parsing JSON:", t);
         throw error;
       }
     });
@@ -73,6 +73,7 @@ const deleteTodoSync = (id) => {
 
   fs.writeFileSync(dbPath, filteredTodos.join('\n') + '\n');
 };
+
 
 module.exports = {
   getTodosSync,
