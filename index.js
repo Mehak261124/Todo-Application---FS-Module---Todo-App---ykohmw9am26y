@@ -28,23 +28,49 @@ const createTodoSync = (todo) => {
 
 
 const updateTodoSync = (id, updates) => {
-  const todos = fs.readFileSync(dbPath, 'utf-8').split('\n').filter(Boolean).map((t) => JSON.parse(t));
+  const todos = fs.readFileSync(dbPath, 'utf-8')
+    .split('\n')
+    .filter(Boolean)
+    .map((t) => {
+      try {
+        return JSON.parse(t);
+      } catch (error) {
+        console.error("Failed to parse line:", t);
+        throw error;
+      }
+    });
+
   const updatedTodos = todos.map((todo) => {
     if (todo.id === id) {
-      return {
+      return JSON.stringify({
         ...todo,
         ...updates,
         updatedAt: new Date().toISOString(),
-      };
+      }, null, 2);
     }
-    return todo;
-  }).map((t) => JSON.stringify(t, null, 2)); // Re-stringify each todo object
+    return JSON.stringify(todo, null, 2);
+  });
+
   fs.writeFileSync(dbPath, updatedTodos.join('\n') + '\n');
 };
 
 const deleteTodoSync = (id) => {
-  const todos = fs.readFileSync(dbPath, 'utf-8').split('\n').filter(Boolean).map((t) => JSON.parse(t));
-  const filteredTodos = todos.filter((todo) => todo.id !== id).map((t) => JSON.stringify(t, null, 2)); // Re-stringify each todo object
+  const todos = fs.readFileSync(dbPath, 'utf-8')
+    .split('\n')
+    .filter(Boolean)
+    .map((t) => {
+      try {
+        return JSON.parse(t);
+      } catch (error) {
+        console.error("Failed to parse line:", t);
+        throw error;
+      }
+    });
+
+  const filteredTodos = todos
+    .filter((todo) => todo.id !== id)
+    .map((t) => JSON.stringify(t, null, 2));
+
   fs.writeFileSync(dbPath, filteredTodos.join('\n') + '\n');
 };
 
