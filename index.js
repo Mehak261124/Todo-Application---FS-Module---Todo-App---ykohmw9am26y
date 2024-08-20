@@ -26,25 +26,25 @@ const createTodoSync = (todo) => {
   fs.appendFileSync(dbPath, str + "\n");
 };
 
+
 const updateTodoSync = (id, updates) => {
-  const todos = fs.readFileSync(dbPath, 'utf-8')+'\n';
-  const updatedTodos = todos.map((t) => {
-    const todo = JSON.parse(t);
+  const todos = fs.readFileSync(dbPath, 'utf-8').split('\n').filter(Boolean).map((t) => JSON.parse(t));
+  const updatedTodos = todos.map((todo) => {
     if (todo.id === id) {
-      return JSON.stringify({
+      return {
         ...todo,
         ...updates,
         updatedAt: new Date().toISOString(),
-      }, null, 2);
+      };
     }
-    return t;
-  });
+    return todo;
+  }).map((t) => JSON.stringify(t, null, 2)); // Re-stringify each todo object
   fs.writeFileSync(dbPath, updatedTodos.join('\n') + '\n');
 };
 
 const deleteTodoSync = (id) => {
-  const todos = fs.readFileSync(dbPath, 'utf-8') + ('\n');
-  const filteredTodos = todos.filter((t) => JSON.parse(t).id !== id);
+  const todos = fs.readFileSync(dbPath, 'utf-8').split('\n').filter(Boolean).map((t) => JSON.parse(t));
+  const filteredTodos = todos.filter((todo) => todo.id !== id).map((t) => JSON.stringify(t, null, 2)); // Re-stringify each todo object
   fs.writeFileSync(dbPath, filteredTodos.join('\n') + '\n');
 };
 
