@@ -1,29 +1,39 @@
-const fs = require('fs');
-const dbPath = "./db.txt";
+const fs = require("fs");
+const path = "./db.txt";
 
 const getTodosSync = () => {
-  const read = fs.readFileSync(dbPath, "utf-8");
-  return read;
+  const todoData = fs.readFileSync(path, "utf-8");
+  return todoData;
+};
+
+const textToJson = () => {
+  const data = getTodosSync().split("}\n{");
+  return JSON.parse(`[${data.join("},\n{")}]`);
+};
+
+const jsonToStr = (arr) => {
+  let str = "";
+  for (i of arr) {
+    str += JSON.stringify(i, null, 2) + "\n";
+  }
+  return str;
 };
 
 const getTodoSync = (id) => {
-  const data = fs.readFileSync(dbPath, "utf-8");
-  const formattedData = "[" + data.split("}\n{").join("},{") + "]";
-  const todos = JSON.parse(formattedData);
-  const todo = todos.find((item) => item.id == id);
-  return JSON.stringify(todo);
+  const newData = textToJson();
+  const finalData = newData.filter((item) => item.id === id);
+  return JSON.stringify(finalData[0]);
 };
 
 const createTodoSync = (todo) => {
-  const obj = {
+  let newTodo = {
     id: Date.now(),
     title: todo,
     isCompleted: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  const str = JSON.stringify(obj, null, 2);
-  fs.appendFileSync(dbPath, str + "\n");
+  fs.appendFileSync(path, JSON.stringify(newTodo, null, 2) + "\n");
 };
 
 const updateTodoSync = (id, updates) => {
