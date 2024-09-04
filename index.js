@@ -27,27 +27,32 @@ const createTodoSync = (todo) => {
 };
 
 const updateTodoSync = (id, updates) => {
-  const todos = fs.readFileSync(dbPath, 'utf-8').trim().split('\n');
-
-  const updatedTodos = todos.map((t) => {
-    const todo = JSON.parse(t);
+  const arr = textToJson();
+  const updatedData = [];
+  for (todo of arr) {
     if (todo.id === id) {
-      return JSON.stringify({
+      let newData = {
         ...todo,
         ...updates,
         updatedAt: new Date().toISOString(),
-      }, null, 2);
+      };
+      updatedData.push(newData);
+    } else {
+      updatedData.push(todo);
     }
-    return t;
-  });
-  fs.writeFileSync(dbPath, updatedTodos.join('\n') + '\n');
+  }
+  fs.writeFileSync(path, jsonToStr(updatedData));
 };
 
-
 const deleteTodoSync = (id) => {
-  const todos = fs.readFileSync(dbPath, 'utf-8').trim().split('\n');
-  const filteredTodos = todos.filter((t) => JSON.parse(t).id !== id);
-  fs.writeFileSync(dbPath, filteredTodos.join('\n') + '\n');
+  const arr = textToJson();
+  const updatedData = [];
+  for (todo of arr) {
+    if (todo.id !== id) {
+      updatedData.push(todo);
+    }
+  }
+  fs.writeFileSync(path, jsonToStr(updatedData));
 };
 
 
